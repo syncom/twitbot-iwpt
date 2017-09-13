@@ -28,8 +28,8 @@ def get_today_str_iso8601():
         e.g., 20170913.
     Returns str
     '''
-    d = subprocess.check_output(["date", "-I"])
-    d_str = d.translate(None, '-\n')
+    d = subprocess.check_output(["date", "+%Y%m%d"])
+    d_str = d.translate(None, '\n')
     return d_str
 
 def get_tweet_str():
