@@ -1,8 +1,8 @@
 # twitbot-iwpt: What Prime Is Today?
 
-A Twitter bot that tweets, if the current date in ISO 8601 format without the
-hyphens (e.g., 20170913) is a prime number. For example, on September 1, 2017,
-it would tweet
+A Twitter bot that tweets, if the current date in ISO 8601 format, without the
+hyphens (e.g., 20170913), is a prime number. For example, on September 1,
+2017, it would tweet
 
 ```
 Today 20170901 is a prime 
@@ -32,7 +32,9 @@ http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS.
 2. Override the corresponding strings in the file '.auth' with appropriate
 Twitter app API access token strings obtained in the last step.
 
-3. Run `python iwpt_bot.py` (or `./iwpt_bot_run.sh`) to tweet.
+3. Run `python iwpt_bot.py` (or `./iwpt_bot_run.sh`) to tweet. Note that it
+only tweets when the ISO 8601 formatted string for today's date is a prime
+number.
 
 4. (Optional) Create a cron job to invoke the bot once a day.
 
