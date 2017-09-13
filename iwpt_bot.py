@@ -2,7 +2,6 @@
 
 import os
 import sys
-import random
 import subprocess
 from twython import Twython
 

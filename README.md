@@ -14,8 +14,7 @@ has a cousin prime.
 ```
 
 # Dependencies
-- Python 2.7, and modules: wikipedia, twython, pyOpenSSL, ndg-httpsclient,
-  pyasn1
+- Python 2.7, and modules: twython, pyOpenSSL, ndg-httpsclient, pyasn1
 - Unix/Linux environment with the 'date' command and the [Pari/GP
   calculator](http://pari.math.u-bordeaux.fr/)
 - The ['prime_classes' project](https://github.com/syncom/prime_classes) on
