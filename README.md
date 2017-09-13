@@ -5,16 +5,21 @@ hyphens (e.g., 20170913) is a prime number. For example, on September 1, 2017,
 it would tweet
 
 ```
-Today, 20170901, is a prime, a Chen prime, an Eisenstein prime, a Pythagorean
-prime, has a twin prime, has a cousin prime.
+Today 20170901 is a prime 
+a Chen prime
+an Eisenstein prime
+a Pythagorean prime
+has a twin prime
+has a cousin prime.
 ```
 
 # Dependencies
 - Python 2.7, and modules: wikipedia, twython, pyOpenSSL, ndg-httpsclient,
   pyasn1
-- Unix/Linux environment with the 'date' command and the Pari/GP calculator
-- The ['prime_classes' Pari-GP script on
-  github](https://github.com/syncom/prime_classes)
+- Unix/Linux environment with the 'date' command and the [Pari/GP
+  calculator](http://pari.math.u-bordeaux.fr/)
+- The ['prime_classes' project](https://github.com/syncom/prime_classes) on
+  Github
 
 # Usage
 Similar to that described in https://github.com/syncom/twitbot-tih.
@@ -27,7 +32,7 @@ http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS.
 2. Override the corresponding strings in the file '.auth' with appropriate
 Twitter app API access token strings obtained in the last step.
 
-3. Run 'python iwpt_bot.py' to tweet.
+3. Run `python iwpt_bot.py` (or `./iwpt_bot_run.sh`) to tweet.
 
 4. (Optional) Create a cron job to invoke the bot once a day.
 
