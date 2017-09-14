@@ -33,7 +33,9 @@ Twitter app API access token strings obtained in the last step.
 
 3. Run `python iwpt_bot.py` (or `./iwpt_bot_run.sh`) to tweet. Note that it
 only tweets when the ISO 8601 formatted string for today's date is a prime
-number.
+number. The log files for each day's tweet can be found in the 'logs' 
+subdirectory. They keep state of the primality info and the tweet status,
+and are used by our application to make tweeting decisions.
 
-4. (Optional) Create a cron job to invoke the bot once a day.
+4. (Optional) Create a cron job to invoke the bot multiple times a day. 
 
