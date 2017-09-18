@@ -4,6 +4,7 @@ import os
 import sys
 import errno
 import subprocess
+import re
 from twython import Twython
 
 
@@ -33,29 +34,59 @@ def get_today_str_iso8601():
     d_str = d.translate(None, '\n')
     return d_str
 
+def is_str_prime(d_str):
+    '''Returns True if d_str is a prime, False otherwise
+    '''
+    script = os.path.join(rootdir, 'isprime.sh')
+    gpout = subprocess.check_output([script, d_str], shell=False)
+    return True if gpout.strip() == '1' else False
+
+def prime_tweet_str(d_str):
+    '''
+    Returns a string to tweet for prime d_str
+    '''
+    script = os.path.join(rootdir, 'iswhatprime.sh')
+    gpout = subprocess.check_output([script, d_str])
+    tweet_str = 'Today ' + gpout
+    return tweet_str
+
+def print_base_expo_pair(pair):
+    '''Format print (base, exponent) pairs. For example, for ('3' ,'2'),
+       it prints '3^2'; for ('3', '1'), it prints '3'.
+    Returns string output in specified format
+    '''
+    if pair[1] == '1':
+        outstr = pair[0]
+    else:
+        outstr = pair[0] + '^' + pair[1]
+    return outstr
+
+def composite_tweet_str(d_str):
+    '''
+    Returns a string to tweet for composite d_str
+    '''
+    script = os.path.join(rootdir, 'factorit.sh')
+    gpout = subprocess.check_output([script, d_str]).strip('\n\[\]Mat')
+    gpoutlist = re.split(r'[;,\s]\s*', gpout)
+    base_expo_pairs = zip(gpoutlist[0::2], gpoutlist[1::2]) # a list of pairs
+    it = iter(base_expo_pairs)
+    # Differentiate head and tail, for formatting
+    head = it.next()
+    tail = list(it)
+    tweet_str = 'Today ' + d_str + ' is not a prime\n' \
+                + d_str + ' = ' + print_base_expo_pair(head)
+    for item in tail:
+        tweet_str = tweet_str + ' x ' + print_base_expo_pair(item)
+    return tweet_str
+
 def get_tweet_str(d_str):
     '''Obtain primality information for d_str
     Returns (isprime, str) pair
     '''
-    script = os.path.join(rootdir, 'iswhatprime.sh')
-    tweet_str = ''
-    gpout = subprocess.check_output([script, d_str])
-    # If d_str is prime, first line would be 
-    #        <d_str> is a prime\n
-    # If d_str is not prime, first line would be
-    #        <d_str> is not a prime\n
-    line_1st = gpout.split('\n')[0]
-    if line_1st[-9] == 's':
-        # "is a prime"
-        isprime = True
-        tweet_str = 'Today ' + gpout
-            
+    if is_str_prime(d_str):
+        return (True, prime_tweet_str(d_str))
     else:
-        # "is not a prime"; thus line_1st[-9] should be 't'
-        isprime = False
-        tweet_str = 'Today ' + d_str + ' is not a prime'
-
-    return (isprime, tweet_str)
+        return (False, composite_tweet_str(d_str))
 
 def get_log_file_path(d_str):
     '''Get a string representing the absolute path the log file.
@@ -169,12 +200,17 @@ if __name__ == '__main__':
     # Tweet iff today is a prime day and we have not tweeted today
     (istweeted, isprime, tweet_str) = get_tweet_str_from_file(logfilepath)
     if isprime and not istweeted:
-        print 'Prime day; not yet tweeted'
+        print 'A prime day; not yet tweeted'
+        print 'Tweeting now...'
         do_tweet(tweet_str)
         mark_logfile_tweeted(logfilepath)
+        print 'Tweeted!'
+    elif not isprime and not istweeted:
+        print 'A composite day; not yet tweeted'
+        print 'Tweeting now...'
+        do_tweet(tweet_str)
+        mark_logfile_tweeted(logfilepath)
+        print 'Tweeted!'
     else:
-        if not isprime:
-            print 'Not a prime day'
-        else:
-            print 'Already tweeted today, a prime day'
+        print 'Already tweeted today. Check twitter.'
 
