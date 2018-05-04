@@ -13,6 +13,13 @@ has a twin prime
 has a cousin prime.
 ```
 
+If the current date is not a prime number, it will tweet the factorization
+of the ISO-8601-formatted date. For example,
+```
+Today 20180503 is not a prime
+20180503 = 7^2 x 37 x 11131
+```
+
 # Dependencies
 - Python 2.7, and modules: twython, pyOpenSSL, ndg-httpsclient, pyasn1
 - Unix/Linux environment with the 'date' command and the [Pari/GP
