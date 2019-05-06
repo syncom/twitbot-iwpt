@@ -115,7 +115,7 @@ def write_tweet_str_to_file(d_str):
     istweeted_str ='0'
     isprime_str = '1' if isprime else '0'
     log_str = istweeted_str + '\n' + isprime_str + '\n' + tweet_str
-#    print 'log_str: ' + log_str
+#    print('log_str: ' + log_str)
 
 
     with open(logfilepath, 'w') as logfile:
@@ -174,7 +174,7 @@ def do_tweet(str):
     [ApiKey, ApiSecret, AccessToken, AccessTokenSecret] = get_api_token()
     api = Twython(ApiKey, ApiSecret, AccessToken, AccessTokenSecret)
     api.update_status(status=str)
-    print "Tweeted: " + str
+    print("Tweeted: " + str)
 
 
 if __name__ == '__main__':
@@ -200,17 +200,17 @@ if __name__ == '__main__':
     # Tweet iff today is a prime day and we have not tweeted today
     (istweeted, isprime, tweet_str) = get_tweet_str_from_file(logfilepath)
     if isprime and not istweeted:
-        print 'A prime day; not yet tweeted'
-        print 'Tweeting now...'
+        print('A prime day; not yet tweeted')
+        print('Tweeting now...')
         do_tweet(tweet_str)
         mark_logfile_tweeted(logfilepath)
-        print 'Tweeted!'
+        print('Tweeted!')
     elif not isprime and not istweeted:
-        print 'A composite day; not yet tweeted'
-        print 'Tweeting now...'
+        print('A composite day; not yet tweeted')
+        print('Tweeting now...')
         do_tweet(tweet_str)
         mark_logfile_tweeted(logfilepath)
-        print 'Tweeted!'
+        print('Tweeted!')
     else:
-        print 'Already tweeted today. Check twitter.'
+        print('Already tweeted today. Check twitter.')
 
