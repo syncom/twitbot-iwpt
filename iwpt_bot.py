@@ -7,7 +7,6 @@ import subprocess
 import re
 from twython import Twython
 
-
 ApiKey = ''
 ApiSecret = ''
 AccessToken = ''
@@ -15,6 +14,7 @@ AccessTokenSecret = ''
 rootdir = os.path.dirname(os.path.realpath(__file__))
 cred_file = os.path.join(rootdir, '.auth')
 TWITTER_ALLOWED_CHAR = 140
+
 
 def get_api_token():
     ''' Obtain Twitter app's API token from file .auth
@@ -25,6 +25,7 @@ def get_api_token():
     t = c.splitlines()
     return t[0:4]
 
+
 def get_today_str_iso8601():
     ''' Obtain current date in ISO8601 format, without the hyphens,
         e.g., 20170913.
@@ -34,12 +35,14 @@ def get_today_str_iso8601():
     d_str = d.translate(None, '\n')
     return d_str
 
+
 def is_str_prime(d_str):
     '''Returns True if d_str is a prime, False otherwise
     '''
     script = os.path.join(rootdir, 'isprime.sh')
     gpout = subprocess.check_output([script, d_str], shell=False)
     return True if gpout.strip() == '1' else False
+
 
 def prime_tweet_str(d_str):
     '''
@@ -49,6 +52,7 @@ def prime_tweet_str(d_str):
     gpout = subprocess.check_output([script, d_str])
     tweet_str = 'Today ' + gpout
     return tweet_str
+
 
 def print_base_expo_pair(pair):
     '''Format print (base, exponent) pairs. For example, for ('3' ,'2'),
@@ -60,6 +64,7 @@ def print_base_expo_pair(pair):
     else:
         outstr = pair[0] + '^' + pair[1]
     return outstr
+
 
 def composite_tweet_str(d_str):
     '''
@@ -79,6 +84,7 @@ def composite_tweet_str(d_str):
         tweet_str = tweet_str + ' x ' + print_base_expo_pair(item)
     return tweet_str
 
+
 def get_tweet_str(d_str):
     '''Obtain primality information for d_str
     Returns (isprime, str) pair
@@ -88,6 +94,7 @@ def get_tweet_str(d_str):
     else:
         return (False, composite_tweet_str(d_str))
 
+
 def get_log_file_path(d_str):
     '''Get a string representing the absolute path the log file.
     Returns logfilepath
@@ -95,6 +102,7 @@ def get_log_file_path(d_str):
     logdir = os.path.join(rootdir, 'logs')
     logfilepath = os.path.join(logdir, d_str + '.log')
     return logfilepath
+
 
 def write_tweet_str_to_file(d_str):
     '''Write the string to tweet, as well as the primality information and the
@@ -117,11 +125,11 @@ def write_tweet_str_to_file(d_str):
     log_str = istweeted_str + '\n' + isprime_str + '\n' + tweet_str
 #    print('log_str: ' + log_str)
 
-
     with open(logfilepath, 'w') as logfile:
         logfile.write(log_str)
 
     return logfilepath
+
 
 def mark_logfile_tweeted(logfilepath):
     '''Mark the log file as 'tweeted', by setting the first character to '1'.
@@ -213,4 +221,3 @@ if __name__ == '__main__':
         print('Tweeted!')
     else:
         print('Already tweeted today. Check twitter.')
-
