@@ -1,18 +1,15 @@
 #!/usr/bin/env python
-
+'''A Twitter bot that tweets, if the current date in ISO 8601 format, without
+the hyphens (e.g., 20170913), is a prime number.
+'''
 import os
-import sys
 import errno
 import subprocess
 import re
 from twython import Twython
 
-ApiKey = ''
-ApiSecret = ''
-AccessToken = ''
-AccessTokenSecret = ''
-rootdir = os.path.dirname(os.path.realpath(__file__))
-cred_file = os.path.join(rootdir, '.auth')
+ROOTDIR = os.path.dirname(os.path.realpath(__file__))
+CRED_FILE = os.path.join(ROOTDIR, '.auth')
 TWITTER_ALLOWED_CHAR = 140
 
 
@@ -20,10 +17,10 @@ def get_api_token():
     ''' Obtain Twitter app's API token from file .auth
     Returns list
     '''
-    f = open(cred_file, 'rb')
-    c = f.read()
-    t = c.splitlines()
-    return t[0:4]
+    fil = open(CRED_FILE, 'rb')
+    content = fil.read()
+    templ = content.splitlines()
+    return templ[0:4]
 
 
 def get_today_str_iso8601():
@@ -31,26 +28,28 @@ def get_today_str_iso8601():
         e.g., 20170913.
     Returns str
     '''
-    d = subprocess.check_output(["date", "+%Y%m%d"])
-    d_str = d.translate(None, '\n')
-    return d_str
+    date_str = subprocess.check_output(["date", "+%Y%m%d"]).strip()
+    return date_str.decode('utf-8')
 
 
-def is_str_prime(d_str):
+def is_str_prime(date_str):
     '''Returns True if d_str is a prime, False otherwise
     '''
-    script = os.path.join(rootdir, 'isprime.sh')
-    gpout = subprocess.check_output([script, d_str], shell=False)
+    script = os.path.join(ROOTDIR, 'isprime.sh')
+    gpout = (
+        subprocess.check_output([script, date_str], shell=False)
+        .decode('utf-8')
+    )
     return True if gpout.strip() == '1' else False
 
 
-def prime_tweet_str(d_str):
+def prime_tweet_str(date_str):
     '''
     Returns a string to tweet for prime d_str
     '''
-    script = os.path.join(rootdir, 'iswhatprime.sh')
-    gpout = subprocess.check_output([script, d_str])
-    tweet_str = 'Today ' + gpout
+    script = os.path.join(ROOTDIR, 'iswhatprime.sh')
+    gpout = subprocess.check_output([script, date_str])
+    tweet_str = 'Today ' + gpout.decode('utf-8')
     return tweet_str
 
 
@@ -66,45 +65,46 @@ def print_base_expo_pair(pair):
     return outstr
 
 
-def composite_tweet_str(d_str):
+def composite_tweet_str(date_str):
     '''
     Returns a string to tweet for composite d_str
     '''
-    script = os.path.join(rootdir, 'factorit.sh')
-    gpout = subprocess.check_output([script, d_str]).strip('\n\[\]Mat')
-    gpoutlist = re.split(r'[;,\s]\s*', gpout)
-    base_expo_pairs = zip(gpoutlist[0::2], gpoutlist[1::2]) # a list of pairs
-    it = iter(base_expo_pairs)
+    script = os.path.join(ROOTDIR, 'factorit.sh')
+    gpout = subprocess.check_output([script, date_str])
+    gpout1 = gpout.strip().strip(r'[]'.encode('utf-8'))
+    gpoutlist = re.split(r'[;,\s]\s*', gpout1.decode('utf-8'))
+    # List a pairs
+    base_expo_pairs = zip(gpoutlist[0::2], gpoutlist[1::2])
+    itr = iter(base_expo_pairs)
     # Differentiate head and tail, for formatting
-    head = it.next()
-    tail = list(it)
-    tweet_str = 'Today ' + d_str + ' is not a prime\n' \
-                + d_str + ' = ' + print_base_expo_pair(head)
+    head = next(itr)
+    tail = list(itr)
+    tweet_str = 'Today ' + date_str + ' is not a prime\n' \
+                + date_str + ' = ' + print_base_expo_pair(head)
     for item in tail:
         tweet_str = tweet_str + ' x ' + print_base_expo_pair(item)
     return tweet_str
 
 
-def get_tweet_str(d_str):
-    '''Obtain primality information for d_str
+def get_tweet_str(date_str):
+    '''Obtain primality information for date_str
     Returns (isprime, str) pair
     '''
-    if is_str_prime(d_str):
-        return (True, prime_tweet_str(d_str))
-    else:
-        return (False, composite_tweet_str(d_str))
+    if is_str_prime(date_str):
+        return (True, prime_tweet_str(date_str))
+
+    return (False, composite_tweet_str(date_str))
 
 
-def get_log_file_path(d_str):
+def get_log_file_path(date_str):
     '''Get a string representing the absolute path the log file.
     Returns logfilepath
     '''
-    logdir = os.path.join(rootdir, 'logs')
-    logfilepath = os.path.join(logdir, d_str + '.log')
-    return logfilepath
+    logdir = os.path.join(ROOTDIR, 'logs')
+    return os.path.join(logdir, date_str + '.log')
 
 
-def write_tweet_str_to_file(d_str):
+def write_tweet_str_to_file(date_str):
     '''Write the string to tweet, as well as the primality information and the
        twitter status for the tweet_str to logfile under the 'logs/'
        directory. A log file for this application always has a file name of
@@ -114,13 +114,13 @@ def write_tweet_str_to_file(d_str):
        means the text in the file has already been tweeted; the second line of
        the file is 0 or 1, where 0 means the date for this file is not a
        prime, and 1 means the date for this file is a prime; the remaining
-       text in the file is the tweet_str. 
+       text in the file is the tweet_str.
     Returns logfilepath
     '''
-    (isprime, tweet_str) = get_tweet_str(d_str)
-    logfilepath = get_log_file_path(d_str)
+    (isprime, tweet_str) = get_tweet_str(date_str)
+    logfilepath = get_log_file_path(date_str)
 
-    istweeted_str ='0'
+    istweeted_str = '0'
     isprime_str = '1' if isprime else '0'
     log_str = istweeted_str + '\n' + isprime_str + '\n' + tweet_str
 #    print('log_str: ' + log_str)
@@ -171,21 +171,21 @@ def get_tweet_str_from_file(logfilepath):
             tweet_str = tweet_str + line
 
     if len(tweet_str) > TWITTER_ALLOWED_CHAR:
-                tweet_str = tweet_str[:TWITTER_ALLOWED_CHAR - 3] + '...'
+        tweet_str = tweet_str[:TWITTER_ALLOWED_CHAR - 3] + '...'
 
     return (istweeted, isprime, tweet_str)
 
 
-def do_tweet(str):
+def do_tweet(t_str):
     ''' Tweet str to Twitter
     '''
-    [ApiKey, ApiSecret, AccessToken, AccessTokenSecret] = get_api_token()
-    api = Twython(ApiKey, ApiSecret, AccessToken, AccessTokenSecret)
-    api.update_status(status=str)
-    print("Tweeted: " + str)
+    [apikey, apisecret, accesstoken, accesstokensecret] = get_api_token()
+    api = Twython(apikey, apisecret, accesstoken, accesstokensecret)
+    api.update_status(status=t_str)
+    print("Tweeted: " + t_str)
 
 
-if __name__ == '__main__':
+def do_main():
     '''
     Tweet today's primality information if today is a prime day.
     It first writes the primality info into a log file, then checks this file
@@ -193,31 +193,35 @@ if __name__ == '__main__':
     only if in this case.
     '''
     d_str = get_today_str_iso8601()
-    logfilepath = get_log_file_path(d_str)
+    logfile_path = get_log_file_path(d_str)
 
     try:
-        os.mkdir(os.path.dirname(logfilepath))
-    except OSError as e:
-        if e.errno != errno.EEXIST:
+        os.mkdir(os.path.dirname(logfile_path))
+    except OSError as err:
+        if err.errno != errno.EEXIST:
             raise
 
     # If log file does not exist, write log file
-    if not os.path.isfile(logfilepath):
+    if not os.path.isfile(logfile_path):
         write_tweet_str_to_file(d_str)
 
     # Tweet iff today is a prime day and we have not tweeted today
-    (istweeted, isprime, tweet_str) = get_tweet_str_from_file(logfilepath)
+    (istweeted, isprime, twt_str) = get_tweet_str_from_file(logfile_path)
     if isprime and not istweeted:
         print('A prime day; not yet tweeted')
         print('Tweeting now...')
-        do_tweet(tweet_str)
-        mark_logfile_tweeted(logfilepath)
+        do_tweet(twt_str)
+        mark_logfile_tweeted(logfile_path)
         print('Tweeted!')
     elif not isprime and not istweeted:
         print('A composite day; not yet tweeted')
         print('Tweeting now...')
-        do_tweet(tweet_str)
-        mark_logfile_tweeted(logfilepath)
+        do_tweet(twt_str)
+        mark_logfile_tweeted(logfile_path)
         print('Tweeted!')
     else:
         print('Already tweeted today. Check twitter.')
+
+
+if __name__ == '__main__':
+    do_main()
