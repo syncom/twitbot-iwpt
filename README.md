@@ -25,7 +25,7 @@ Today 20180503 is not a prime
 
 ## Dependencies
 
-- Python 2.7, and modules: twython, pyOpenSSL, ndg-httpsclient, pyasn1
+- Python 3.6 or above
 - Unix/Linux environment with the 'date' command and the [Pari/GP
   calculator](http://pari.math.u-bordeaux.fr/)
 - The ['prime_classes' project](https://github.com/syncom/prime_classes) on
@@ -40,13 +40,24 @@ Similar to that described in <https://github.com/syncom/twitbot-tih>.
    instructions at:
    <http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS>.
 
+1. Clone this repository with the submodule and change directory to it. Set up
+   Python3 virtual environment.
+
+   ```bash
+   git clone --recursive https://github.com/syncom/twitbot-iwpt.git
+   cd twitbot-iwpt
+   # Set up virtualenv and pip install packages
+   make install
+   ```
+
 1. Override the corresponding strings in the file '.auth' with appropriate
    Twitter app API access token strings obtained in the last step.
 
-1. Run `python iwpt_bot.py` (or `./iwpt_bot_run.sh`) to tweet. Note that it
-   only tweets when the ISO 8601 formatted string for today's date is a prime
-   number. The log files for each day's tweet can be found in the 'logs'
-   subdirectory. They keep state of the primality info and the tweet status, and
-   are used by our application to make tweeting decisions.
+1. Run `./iwpt_bot_run.sh` to tweet. Note that it only tweets when the ISO 8601
+   formatted string for today's date is a prime number. The log files for each
+   day's tweet can be found in the 'logs' subdirectory. They keep state of the
+   primality info and the tweet status, and are used by our application to make
+   tweeting decisions.
 
-1. (Optional) Create a cron job to invoke the bot multiple times a day.
+1. (Optional) Create a cron job to invoke the bot multiple times a day, to
+   account for sporadic connecitivity issues.
