@@ -3,3 +3,6 @@
 *.bak
 .auth
 .DS_Store
+venv
+iwpt_venv
+iwpt.log
