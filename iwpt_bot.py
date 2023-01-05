@@ -17,10 +17,10 @@ def get_api_token():
     ''' Obtain Twitter app's API token from file .auth
     Returns list
     '''
-    fil = open(CRED_FILE, 'rb')
-    content = fil.read()
-    templ = content.splitlines()
-    return templ[0:4]
+    with open(CRED_FILE, 'rb', encoding='utf-8') as fil:
+        content = fil.read()
+        templ = content.splitlines()
+        return templ[0:4]
 
 
 def get_today_str_iso8601():
@@ -40,7 +40,7 @@ def is_str_prime(date_str):
         subprocess.check_output([script, date_str], shell=False)
         .decode('utf-8')
     )
-    return True if gpout.strip() == '1' else False
+    return gpout.strip() == '1'
 
 
 def prime_tweet_str(date_str):
@@ -125,7 +125,7 @@ def write_tweet_str_to_file(date_str):
     log_str = istweeted_str + '\n' + isprime_str + '\n' + tweet_str
 #    print('log_str: ' + log_str)
 
-    with open(logfilepath, 'w') as logfile:
+    with open(logfilepath, 'w', encoding='utf-8') as logfile:
         logfile.write(log_str)
 
     return logfilepath
@@ -135,14 +135,14 @@ def mark_logfile_tweeted(logfilepath):
     '''Mark the log file as 'tweeted', by setting the first character to '1'.
     Returns None
     '''
-    with open(logfilepath, 'r') as fin:
+    with open(logfilepath, 'r', encoding='utf-8') as fin:
         oldstr = fin.read()
 
     templist = list(oldstr)
     templist[0] = '1'
     newstr = ''.join(templist)
 
-    with open(logfilepath, 'w') as fout:
+    with open(logfilepath, 'w', encoding='utf-8') as fout:
         fout.write(newstr)
 
 
@@ -163,7 +163,7 @@ def get_tweet_str_from_file(logfilepath):
     Returns (istweeted, isprime, tweet_str) triple
     '''
     tweet_str = ''
-    with open(logfilepath) as logfile:
+    with open(logfilepath, encoding='utf-8') as logfile:
         istweeted = (logfile.readline().strip() == '1')
         isprime = (logfile.readline().strip() == '1')
 
