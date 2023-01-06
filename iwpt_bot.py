@@ -17,7 +17,7 @@ def get_api_token():
     ''' Obtain Twitter app's API token from file .auth
     Returns list
     '''
-    with open(CRED_FILE, 'rb', encoding='utf-8') as fil:
+    with open(CRED_FILE, 'r', encoding='utf-8') as fil:
         content = fil.read()
         templ = content.splitlines()
         return templ[0:4]
