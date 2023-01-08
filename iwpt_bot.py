@@ -14,13 +14,32 @@ TWITTER_ALLOWED_CHAR = 140
 
 
 def get_api_token():
-    ''' Obtain Twitter app's API token from file .auth
+    ''' Obtain Twitter app's API token values from envirnoment or file .auth.
+    If any of environment variables IWPT_APP_KEY, IWPT_APP_SECRET,
+    IWPT_OAUTH_TOKEN, IWPT_OAUTH_TOKEN_SECRET exist, they override the
+    corresponding secret values in file .auth.
+
     Returns list
     '''
-    with open(CRED_FILE, 'r', encoding='utf-8') as fil:
-        content = fil.read()
-        templ = content.splitlines()
-        return templ[0:4]
+    app_key = os.environ.get('IWPT_APP_KEY')
+    app_secret = os.environ.get('IWPT_APP_SECRET')
+    oauth_token = os.environ.get('IWPT_OAUTH_TOKEN')
+    oauth_token_secret = os.environ.get('IWPT_OAUTH_TOKEN_SECRET')
+    credential = [app_key, app_secret, oauth_token, oauth_token_secret]
+
+    if os.path.exists(CRED_FILE):
+        with open(CRED_FILE, 'r', encoding='utf-8') as fil:
+            content = fil.read()
+            templ = content.splitlines()
+            print(len(templ))
+            if len(templ) < 4:
+                raise Exception(CRED_FILE
+                                + " is malformed. "
+                                + "It needs to contain at least 4 secrets")
+            return [fil if env is None else env
+                    for env, fil in zip(credential, templ)]
+
+    return credential
 
 
 def get_today_str_iso8601():
