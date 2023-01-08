@@ -7,7 +7,7 @@ on:
 jobs:
   run-iwpt-bot:
     strategy:
-      fail-fast: true
+      fail-fast: false
       # Linux runner
       matrix:
         os: [ubuntu-latest]
@@ -17,6 +17,11 @@ jobs:
         run: |
           set -euxo pipefail
           echo "TODAY_ISO8601=$(date +%Y%m%d)" >> $GITHUB_ENV
+
+      - name: "Install deps"
+        run: |
+          set -euxo pipefail
+          sudo apt install pari-gp
 
       - name: "Checkout code"
         uses: actions/checkout@v3
