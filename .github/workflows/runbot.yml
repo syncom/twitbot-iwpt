@@ -24,6 +24,7 @@ jobs:
         run: |
           set -euxo pipefail
           cd ${{ github.workspace }}/
+          make install
           ./iwpt_bot_run.sh
         env:
           IWPT_APP_KEY: '${{ secrets.IWPT_APP_KEY }}'
