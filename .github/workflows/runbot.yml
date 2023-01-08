@@ -64,3 +64,4 @@ jobs:
           reviewers: syncom
           milestone: 1
           draft: false
+          base: ${{ github.head_ref }}
