@@ -1,8 +1,8 @@
 name: "Run IWPT bot"
 on:
   schedule:
-    # Daily at 06:00am, UTC
-    - cron: '0 6 * * *'
+    # Daily at 09:42am, UTC
+    - cron: '42 9 * * *'
 
 jobs:
   run-iwpt-bot:

@@ -28,9 +28,10 @@ Today 20180503 is not a prime
 
 - Python 3.6 or above
 - Unix/Linux environment with the 'date' command and the [Pari/GP
-  calculator](http://pari.math.u-bordeaux.fr/)
+  calculator](http://pari.math.u-bordeaux.fr/). On Ubuntu, `apt install pari-gp`
+  will get Pari/GP installed.
 - The ['prime_classes' project](https://github.com/syncom/prime_classes) on
-  Github
+  Github.
 
 ## Usage
 
@@ -51,8 +52,13 @@ Similar to that described in <https://github.com/syncom/twitbot-tih>.
    make install
    ```
 
-1. Override the corresponding strings in the file '.auth' with appropriate
-   Twitter app API access token strings obtained in the last step.
+1. Set up authentication and authorization secrets. The preferred way is to set
+   environment variables `IWPT_APP_KEY`, `IWPT_APP_SECRET`, `IWPT_OAUTH_TOKEN`,
+   and `IWPT_OAUTH_TOKEN_SECRET` with API Key, API Secret, Access Token, and
+   Access Token Secret values obtained in the first step. Alternatively, one can
+   override the corresponding strings in the file '.auth' with appropriate
+   secret strings.  When any of the aformetioned environment variables are set,
+   they take precedence over values in the `.auth` file.
 
 1. Run `./iwpt_bot_run.sh` to tweet. Note that it only tweets when the ISO 8601
    formatted string for today's date is a prime number. The log files for each
