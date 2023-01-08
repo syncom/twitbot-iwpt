@@ -31,7 +31,6 @@ def get_api_token():
         with open(CRED_FILE, 'r', encoding='utf-8') as fil:
             content = fil.read()
             templ = content.splitlines()
-            print(len(templ))
             if len(templ) < 4:
                 raise Exception(CRED_FILE
                                 + " is malformed. "
