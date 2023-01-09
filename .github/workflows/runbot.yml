@@ -58,8 +58,8 @@ jobs:
 
             [1]: https://github.com/peter-evans/create-pull-request
           labels: |
-            "iwpt log"
-            "automated pr"
+            iwpt log
+            automated pr
           assignees: syncom
           reviewers: syncom
           draft: false
