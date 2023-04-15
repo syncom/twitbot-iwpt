@@ -21,6 +21,7 @@ jobs:
       - name: "Install deps"
         run: |
           set -euxo pipefail
+          sudo apt update
           sudo apt install pari-gp
 
       - name: "Checkout code"
