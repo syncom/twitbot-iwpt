@@ -40,7 +40,14 @@ Similar to that described in <https://github.com/syncom/twitbot-tih>.
 1. Create a Twitter app and obtain the API Key, API Secret, Access Token, and
    Access Token Secret for the app. This can be done by following the
    instructions at:
-   <http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS>.
+   <http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS>. On
+   20230429, we started to see API authentication errors, and a message "This
+   app has violated Twitter rules and policies" on the Twitter app setting page.
+   According to [this
+   discussion](https://twittercommunity.com/t/this-app-has-violated-twitter-rules-and-policies/191204/10),
+   we signed up for the Free tier of "[Twitter API
+   v2](https://developer.twitter.com/en/portal/products)" (at no cost), and
+   clicked button "downgrade to free"; this resolved the auth issue.
 
 1. Clone this repository with the submodule and change directory to it. Set up
    Python3 virtual environment.
