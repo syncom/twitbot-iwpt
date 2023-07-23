@@ -36,10 +36,10 @@ jobs:
           make install
           ./iwpt_bot_run.sh
         env:
-          IWPT_APP_KEY: '${{ secrets.IWPT_APP_KEY }}'
-          IWPT_APP_SECRET: '${{ secrets.IWPT_APP_SECRET }}'
-          IWPT_OAUTH_TOKEN: '${{ secrets.IWPT_OAUTH_TOKEN }}'
-          IWPT_OAUTH_TOKEN_SECRET: '${{ secrets.IWPT_OAUTH_TOKEN_SECRET }}'
+          IWPT_API_KEY: '${{ secrets.IWPT_API_KEY }}'
+          IWPT_API_SECRET: '${{ secrets.IWPT_API_SECRET }}'
+          IWPT_ACCESS_TOKEN: '${{ secrets.IWPT_ACCESS_TOKEN }}'
+          IWPT_ACCESS_SECRET: '${{ secrets.IWPT_ACCESS_SECRET }}'
 
       - name: "Create Pull Request"
         id: cpr
