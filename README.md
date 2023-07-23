@@ -1,4 +1,4 @@
-# twitbot-iwpt: What Prime Is Today
+# twitbot-iwpt: Is What Prime Today?
 
 [![Shellcheck](https://github.com/syncom/twitbot-iwpt/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/syncom/twitbot-iwpt/actions/workflows/shellcheck.yml)
 [![Pylint](https://github.com/syncom/twitbot-iwpt/actions/workflows/pylint.yml/badge.svg)](https://github.com/syncom/twitbot-iwpt/actions/workflows/pylint.yml)
@@ -40,14 +40,16 @@ Similar to that described in <https://github.com/syncom/twitbot-tih>.
 1. Create a Twitter app and obtain the API Key, API Secret, Access Token, and
    Access Token Secret for the app. This can be done by following the
    instructions at:
-   <http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS>. On
-   20230429, we started to see API authentication errors, and a message "This
+   <https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api>.
+   On 20230429, we started to see API authentication errors, and a message "This
    app has violated Twitter rules and policies" on the Twitter app setting page.
    According to [this
    discussion](https://twittercommunity.com/t/this-app-has-violated-twitter-rules-and-policies/191204/10),
    we signed up for the Free tier of "[Twitter API
    v2](https://developer.twitter.com/en/portal/products)" (at no cost), and
-   clicked button "downgrade to free"; this resolved the auth issue.
+   clicked button "downgrade to free"; this resolved the auth issue. You may
+   also need to put the Twitter app under a "project" for better organization
+   and monitoring of the app.
 
 1. Clone this repository with the submodule and change directory to it. Set up
    Python3 virtual environment.
@@ -59,13 +61,16 @@ Similar to that described in <https://github.com/syncom/twitbot-tih>.
    make install
    ```
 
-1. Set up authentication and authorization secrets. The preferred way is to set
-   environment variables `IWPT_APP_KEY`, `IWPT_APP_SECRET`, `IWPT_OAUTH_TOKEN`,
-   and `IWPT_OAUTH_TOKEN_SECRET` with API Key, API Secret, Access Token, and
-   Access Token Secret values obtained in the first step. Alternatively, one can
-   override the corresponding strings in the file '.auth' with appropriate
-   secret strings.  When any of the aformetioned environment variables are set,
-   they take precedence over values in the `.auth` file.
+1. Set up authentication and authorization secrets by following [this Getting
+   Started
+   guide](https://developer.twitter.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api).
+   The preferred way is to set environment variables `IWPT_API_KEY`,
+   `IWPT_API_SECRET`, `IWPT_ACCESS_TOKEN`, and `IWPT_ACCESS_SECRET` with API
+   Key, API Secret, Access Token, and Access Token Secret values obtained in the
+   first step. Alternatively, one can override the corresponding strings in the
+   file '.auth' with appropriate secret strings.  When any of the aformetioned
+   environment variables are set, they take precedence over values in the
+   `.auth` file.
 
 1. Run `./iwpt_bot_run.sh` to tweet. Note that it only tweets when the ISO 8601
    formatted string for today's date is a prime number. The log files for each
