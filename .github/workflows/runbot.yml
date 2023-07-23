@@ -1,5 +1,8 @@
 name: "Run IWPT bot"
 on:
+  push:
+    branches:
+      - 'syncom/update-runbot-secret-names'
   schedule:
     # Daily at 09:42am, UTC
     - cron: '42 9 * * *'
