@@ -1,7 +1,6 @@
 # twitbot-iwpt: Is What Prime Today?
 
-[![Shellcheck](https://github.com/syncom/twitbot-iwpt/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/syncom/twitbot-iwpt/actions/workflows/shellcheck.yml)
-[![Pylint](https://github.com/syncom/twitbot-iwpt/actions/workflows/pylint.yml/badge.svg)](https://github.com/syncom/twitbot-iwpt/actions/workflows/pylint.yml)
+[![Sanity checks](https://github.com/syncom/twitbot-iwpt/actions/workflows/sanity.yml/badge.svg)](https://github.com/syncom/twitbot-iwpt/actions/workflows/sanity.yml)
 
 A Twitter bot that tweets, if the current date in ISO 8601 format, without the
 hyphens (e.g., 20170913), is a prime number. For example, on September 1,
