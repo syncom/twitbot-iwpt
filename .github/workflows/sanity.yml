@@ -63,4 +63,3 @@ jobs:
               pylint "$f"
             fi
           done
-

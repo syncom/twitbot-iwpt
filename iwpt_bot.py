@@ -33,7 +33,7 @@ def get_credential():
             content = fil.read()
             templ = content.splitlines()
             if len(templ) < 4:
-                raise Exception(CRED_FILE
+                raise ValueError(CRED_FILE
                                 + " is malformed. "
                                 + "It needs to contain at least 4 secrets")
             return [fil if env is None else env
@@ -183,8 +183,8 @@ def get_tweet_str_from_file(logfilepath):
     '''
     tweet_str = ''
     with open(logfilepath, encoding='utf-8') as logfile:
-        istweeted = (logfile.readline().strip() == '1')
-        isprime = (logfile.readline().strip() == '1')
+        istweeted = logfile.readline().strip() == '1'
+        isprime = logfile.readline().strip() == '1'
 
         for line in logfile:
             tweet_str = tweet_str + line
