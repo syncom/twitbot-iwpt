@@ -63,3 +63,36 @@ jobs:
               pylint "$f"
             fi
           done
+
+  dryrun-iwpt-bot:
+    strategy:
+      fail-fast: false
+      # Linux runner
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: "Set env"
+        run: |
+          set -euxo pipefail
+          echo "TODAY_ISO8601=$(date +%Y%m%d)" >> $GITHUB_ENV
+
+      - name: "Install deps"
+        run: |
+          set -euxo pipefail
+          sudo apt update
+          sudo apt install pari-gp
+
+      - name: "Checkout code"
+        uses: actions/checkout@v4.1.1
+        with:
+          submodules: true
+
+      - name: "Dryrun bot"
+        run: |
+          set -euxo pipefail
+          cd ${{ github.workspace }}/
+          make install
+          ./iwpt_bot_run.sh
+        env:
+          IWPT_DRYRUN: '1'

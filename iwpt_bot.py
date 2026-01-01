@@ -230,18 +230,21 @@ def do_main():
 
     # Tweet iff today is a prime day and we have not tweeted today
     (istweeted, isprime, twt_str) = get_tweet_str_from_file(logfile_path)
-    if isprime and not istweeted:
-        print('A prime day; not yet tweeted')
-        print('Tweeting now...')
-        do_tweet(twt_str)
-        mark_logfile_tweeted(logfile_path)
-        print('Tweeted!')
-    elif not isprime and not istweeted:
-        print('A composite day; not yet tweeted')
-        print('Tweeting now...')
-        do_tweet(twt_str)
-        mark_logfile_tweeted(logfile_path)
-        print('Tweeted!')
+    if not istweeted:
+        if isprime:
+            print('A prime day; not yet tweeted')
+        else:
+            print('A composite day; not yet tweeted')
+
+        # Proceed to tweet if environment variable IWPT_DRYRUN is not set to '1'
+        if os.environ.get('IWPT_DRYRUN') != '1':
+            print('Tweeting now...')
+            do_tweet(twt_str)
+            print('Tweeted!')
+            mark_logfile_tweeted(logfile_path)
+        else:
+            print('Dry run mode: not tweeting.')
+            print('Tweet string would be:\n' + twt_str)
     else:
         print('Already tweeted today. Check twitter.')
 
