@@ -2,6 +2,7 @@
 '''A Twitter bot that tweets, if the current date in ISO 8601 format, without
 the hyphens (e.g., 20170913), is a prime number.
 '''
+import hashlib
 import os
 import errno
 import subprocess
@@ -110,9 +111,16 @@ def get_tweet_str(date_str):
     Returns (isprime, str) pair
     '''
     if is_str_prime(date_str):
-        return (True, prime_tweet_str(date_str))
+        isprime = True
+        main_text = prime_tweet_str(date_str)
+    else:
+        isprime = False
+        main_text = composite_tweet_str(date_str)
 
-    return (False, composite_tweet_str(date_str))
+    sha256_hash = hashlib.sha256(main_text.encode('utf-8')).hexdigest()
+    main_text = main_text + '\nsha256:' + sha256_hash
+
+    return (isprime, main_text)
 
 
 def get_log_file_path(date_str):
