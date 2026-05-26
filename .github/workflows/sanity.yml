@@ -22,7 +22,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4.1.1
+        # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: "Install shellcheck on Ubuntu"
         run: |
           sudo apt update
@@ -49,7 +50,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: "Run pylint"
         run: |
@@ -84,7 +86,8 @@ jobs:
           sudo apt install pari-gp
 
       - name: "Checkout code"
-        uses: actions/checkout@v4.1.1
+        # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           submodules: true
 
