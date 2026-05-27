@@ -3,9 +3,6 @@ on:
   schedule:
     # Daily at 09:42am, UTC
     - cron: '42 9 * * *'
-  push:
-    branches:
-      - syncom/gha-update-deps-create-pull-request # Test trigger
 
 jobs:
   run-iwpt-bot:
@@ -25,8 +22,7 @@ jobs:
         run: |
           set -euxo pipefail
           sudo apt update
-          sudo apt install pari-gp -y
-          sudo apt install faketime -y
+          sudo apt install pari-gp
 
       - name: "Checkout code"
         # v6.0.2
@@ -39,7 +35,7 @@ jobs:
           set -euxo pipefail
           cd ${{ github.workspace }}/
           make install
-          faketime '2026-05-29 01:02:03' ./iwpt_bot_run.sh
+          ./iwpt_bot_run.sh
         env:
           IWPT_API_KEY: '${{ secrets.IWPT_API_KEY }}'
           IWPT_API_SECRET: '${{ secrets.IWPT_API_SECRET }}'
