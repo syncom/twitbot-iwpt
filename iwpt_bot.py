@@ -7,11 +7,20 @@ import os
 import errno
 import subprocess
 import re
+import requests
 import tweepy
 
 ROOTDIR = os.path.dirname(os.path.realpath(__file__))
 CRED_FILE = os.path.join(ROOTDIR, '.auth')
 TWITTER_ALLOWED_CHAR = 140
+# Statuses reported for the attempt at posting today's tweet
+TWEET_STATUS_TWEETED = 'tweeted'
+TWEET_STATUS_FAILED = 'failed'
+TWEET_STATUS_DRYRUN = 'dry-run'
+TWEET_STATUS_ALREADY_TWEETED = 'already-tweeted'
+# Maximum length of the detail reported along with a status. Keeps the
+# GitHub Actions environment file tidy.
+STATUS_DETAIL_MAX_CHAR = 200
 
 
 def get_credential():
@@ -203,6 +212,35 @@ def get_tweet_str_from_file(logfilepath):
     return (istweeted, isprime, tweet_str)
 
 
+def report_tweet_status(status, detail=''):
+    '''Report the status of today's tweet attempt. The status is printed to
+       the standard output and, when running inside a GitHub Actions workflow,
+       also exported through the GITHUB_ENV file as IWPT_TWEET_STATUS and
+       IWPT_TWEET_DETAIL, so that subsequent workflow steps (notably the one
+       opening a pull request for the log file) can report the status, too.
+
+       The detail is flattened into a single line and truncated, as the
+       GITHUB_ENV file format is line based.
+    Returns None
+    '''
+    detail_line = ' '.join(detail.split())
+    if len(detail_line) > STATUS_DETAIL_MAX_CHAR:
+        detail_line = detail_line[:STATUS_DETAIL_MAX_CHAR - 3] + '...'
+
+    status_str = 'Tweet status: ' + status
+    if detail_line:
+        status_str = status_str + ' (' + detail_line + ')'
+    print(status_str)
+
+    env_file = os.environ.get('GITHUB_ENV')
+    if not env_file:
+        return
+
+    with open(env_file, 'a', encoding='utf-8') as fout:
+        fout.write('IWPT_TWEET_STATUS=' + status + '\n')
+        fout.write('IWPT_TWEET_DETAIL=' + detail_line + '\n')
+
+
 def do_tweet(t_str):
     ''' Tweet str to Twitter
     '''
@@ -222,6 +260,12 @@ def do_main():
     It first writes the primality info into a log file, then checks this file
     to see if today is a prime AND it has not tweeted yet. It tweets if and
     only if in this case.
+
+    A failure to post the tweet is not fatal: the log file is left behind with
+    its 'not tweeted' status, the failure is reported through
+    report_tweet_status(), and this function returns normally. That way the
+    caller (e.g., a CI workflow) can still commit the log file and open a pull
+    request for it, carrying the posting status along.
     '''
     d_str = get_today_str_iso8601()
     logfile_path = get_log_file_path(d_str)
@@ -247,14 +291,25 @@ def do_main():
         # Proceed to tweet if environment variable IWPT_DRYRUN is not set to '1'
         if os.environ.get('IWPT_DRYRUN') != '1':
             print('Tweeting now...')
-            do_tweet(twt_str)
-            print('Tweeted!')
-            mark_logfile_tweeted(logfile_path)
+            try:
+                do_tweet(twt_str)
+            except (tweepy.TweepyException, requests.RequestException) as err:
+                # Keep the log file's 'not tweeted' status, so that the
+                # failure is recorded, and a later run can retry. Do not
+                # re-raise: the log file is still worth committing.
+                report_tweet_status(TWEET_STATUS_FAILED,
+                                    type(err).__name__ + ': ' + str(err))
+            else:
+                print('Tweeted!')
+                mark_logfile_tweeted(logfile_path)
+                report_tweet_status(TWEET_STATUS_TWEETED)
         else:
             print('Dry run mode: not tweeting.')
             print('Tweet string would be:\n' + twt_str)
+            report_tweet_status(TWEET_STATUS_DRYRUN)
     else:
         print('Already tweeted today. Check twitter.')
+        report_tweet_status(TWEET_STATUS_ALREADY_TWEETED)
 
 
 if __name__ == '__main__':
